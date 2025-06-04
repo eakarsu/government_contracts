@@ -1,0 +1,40 @@
+{
+  "timestamp": "2025-06-03T15:42:12.165793",
+  "input_file": "temp.txt",
+  "output_directory": "react",
+  "statistics": {
+    "total_directories_created": 7,
+    "total_files_created": 18,
+    "total_errors": 0
+  },
+  "created_directories": [
+    ".",
+    "src",
+    "src/components/common",
+    "src/components/search",
+    "src/context",
+    "src/pages",
+    "src/services"
+  ],
+  "created_files": [
+    "package.json",
+    "src/App.js",
+    "src/components/common/Header.js",
+    "src/components/common/Layout.js",
+    "src/components/common/Sidebar.js",
+    "src/components/search/SearchBar.js",
+    "src/components/search/SearchFilters.js",
+    "src/components/search/SearchResults.js",
+    "src/context/AuthContext.js",
+    "src/context/CompanyContext.js",
+    "src/index.css",
+    "src/index.js",
+    "src/pages/ContractDetails.js",
+    "src/pages/Dashboard.js",
+    "src/pages/SearchContracts.js",
+    "src/services/api.js",
+    "src/services/contractService.js",
+    "src/services/formService.js"
+  ],
+  "errors": []
+}

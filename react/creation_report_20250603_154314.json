@@ -1,0 +1,32 @@
+{
+  "timestamp": "2025-06-03T15:43:14.932143",
+  "input_file": "temp2.txt",
+  "output_directory": "react2",
+  "statistics": {
+    "total_directories_created": 4,
+    "total_files_created": 13,
+    "total_errors": 0
+  },
+  "created_directories": [
+    "src/components/common",
+    "src/components/dashboard",
+    "src/components/forms",
+    "src/pages"
+  ],
+  "created_files": [
+    "src/components/common/LoadingSpinner.js",
+    "src/components/common/PrivateRoute.js",
+    "src/components/dashboard/ContractChart.js",
+    "src/components/dashboard/RecentActivity.js",
+    "src/components/dashboard/StatsCard.js",
+    "src/components/forms/FormField.js",
+    "src/components/forms/FormPreview.js",
+    "src/pages/Applications.js",
+    "src/pages/CompanyProfile.js",
+    "src/pages/FormGenerator.js",
+    "src/pages/Login.js",
+    "src/pages/SavedSearches.js",
+    "tailwind.config.js"
+  ],
+  "errors": []
+}

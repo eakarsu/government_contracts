@@ -1,0 +1,28 @@
+{
+  "timestamp": "2025-06-03T17:32:43.672991",
+  "input_file": "output_file",
+  "output_directory": "react_api",
+  "statistics": {
+    "total_directories_created": 5,
+    "total_files_created": 8,
+    "total_errors": 0
+  },
+  "created_directories": [
+    ".",
+    "controllers",
+    "middleware",
+    "models",
+    "routes"
+  ],
+  "created_files": [
+    "controllers/authController.js",
+    "controllers/companyController.js",
+    "middleware/auth.js",
+    "models/Company.js",
+    "models/User.js",
+    "routes/auth.js",
+    "routes/company.js",
+    "server.js"
+  ],
+  "errors": []
+}

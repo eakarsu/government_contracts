@@ -1,0 +1,17 @@
+Project Structure:
+
+├── config/
+  ├── database.js
+├── controllers/
+  ├── contractController.js
+  ├── formController.js
+├── models/
+  ├── Application.js
+  ├── Contract.js
+├── routes/
+  ├── contracts.js
+  ├── forms.js
+├── services/
+  ├── aiService.js
+  ├── samGovService.js
+  ├── vectorDbService.js

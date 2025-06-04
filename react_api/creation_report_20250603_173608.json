@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-06-03T17:36:08.493832",
+  "input_file": "temp4.txt",
+  "output_directory": "react_api",
+  "statistics": {
+    "total_directories_created": 2,
+    "total_files_created": 10,
+    "total_errors": 0
+  },
+  "created_directories": [
+    "config",
+    "services"
+  ],
+  "created_files": [
+    "config/database.js",
+    "controllers/contractController.js",
+    "controllers/formController.js",
+    "models/Application.js",
+    "models/Contract.js",
+    "routes/contracts.js",
+    "routes/forms.js",
+    "services/aiService.js",
+    "services/samGovService.js",
+    "services/vectorDbService.js"
+  ],
+  "errors": []
+}

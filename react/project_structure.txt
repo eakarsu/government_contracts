@@ -1,0 +1,21 @@
+Project Structure:
+
+├── src/
+  ├── components/
+    ├── common/
+      ├── LoadingSpinner.js
+      ├── PrivateRoute.js
+    ├── dashboard/
+      ├── ContractChart.js
+      ├── RecentActivity.js
+      ├── StatsCard.js
+    ├── forms/
+      ├── FormField.js
+      ├── FormPreview.js
+  ├── pages/
+    ├── Applications.js
+    ├── CompanyProfile.js
+    ├── FormGenerator.js
+    ├── Login.js
+    ├── SavedSearches.js
+├── tailwind.config.js
