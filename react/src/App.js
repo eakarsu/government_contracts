@@ -4,6 +4,8 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-datepicker/dist/react-datepicker.css';
+import MissingFeaturesHub from './pages/MissingFeaturesHub';
+import ProductionReadiness from './pages/ProductionReadiness';
 
 import { AuthProvider } from './context/AuthContext';
 import { CompanyProvider } from './context/CompanyContext';
@@ -35,6 +37,8 @@ function App() {
                 <Route path="form-generator/:contractId" element={<FormGenerator />} />
                 <Route path="profile" element={<CompanyProfile />} />
                 <Route path="saved-searches" element={<SavedSearches />} />
+                <Route path="missing-features" element={<MissingFeaturesHub />} />
+                <Route path="production-readiness" element={<ProductionReadiness />} />
                 <Route path="applications" element={<Applications />} />
               </Route>
             </Routes>
