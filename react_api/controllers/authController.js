@@ -1,67 +1,58 @@
 // controllers/authController.js
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const runtimeUsers = require('../services/runtimeUserStore');
+
+const getJwtSecret = () => {
+  const secret = process.env.JWT_SECRET || '';
+  if (secret.length < 32 || /fallback|change|replace|example/i.test(secret)) {
+    throw new Error('JWT_SECRET must be a unique value of at least 32 characters');
+  }
+  return secret;
+};
 
 // Generate JWT token
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET || 'fallback-secret', {
-    expiresIn: '30d',
+  return jwt.sign({ id }, getJwtSecret(), {
+    expiresIn: '8h',
   });
 };
 
 // Register new user
 exports.register = async (req, res) => {
   try {
-    console.log('=== REGISTRATION DEBUG ===');
-    console.log('Request body:', req.body);
-    
-    const { email, password, companyName } = req.body;
+    const { email, password } = req.body;
+    const companyName = req.body.companyName || req.body.name || req.body.fullName || req.body.full_name;
 
     // Validate input
-    if (!email || !password || !companyName) {
-      console.log('Missing required fields');
-      return res.status(400).json({ message: 'All fields are required' });
+    if (typeof email !== 'string' || !email.includes('@') ||
+        typeof password !== 'string' || password.length < 12 ||
+        typeof companyName !== 'string' || !companyName.trim()) {
+      return res.status(400).json({ message: 'Valid email, company name, and a password of at least 12 characters are required' });
     }
 
     // Check if user exists
-    console.log('Checking if user exists...');
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
-    console.log('Existing user found:', !!existingUser);
+    const existingUser = runtimeUsers.enabled()
+      ? await runtimeUsers.findByEmail(email)
+      : await User.findOne({ email: email.toLowerCase() });
     
     if (existingUser) {
-      console.log('User already exists');
       return res.status(400).json({ message: 'User already exists' });
     }
 
     // Create user
-    console.log('Creating new user...');
-    const user = new User({
-      email: email.toLowerCase(),
-      password,
-      companyName,
-      role: 'user',
-      isActive: true
-    });
-
-    console.log('User object before save:', {
-      email: user.email,
-      companyName: user.companyName,
-      hasPassword: !!user.password
-    });
-
-    console.log('Attempting to save user...');
-    const savedUser = await user.save();
-    console.log('User saved successfully!');
-    console.log('Saved user ID:', savedUser._id);
+    const savedUser = runtimeUsers.enabled()
+      ? await runtimeUsers.create({ email, password, companyName: companyName.trim() })
+      : await new User({
+          email: email.toLowerCase(),
+          password,
+          companyName,
+          role: 'user',
+          isActive: true
+        }).save();
 
     // Generate token
-    console.log('Generating token...');
     const token = generateToken(savedUser._id);
-    console.log('Token generated successfully');
-
-    // Verify the save worked
-    const verifyUser = await User.findById(savedUser._id);
-    console.log('Verification - user found in DB:', !!verifyUser);
 
     res.status(201).json({
       token,
@@ -72,10 +63,7 @@ exports.register = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('=== REGISTRATION ERROR ===');
-    console.error('Error details:', error);
-    console.error('Error message:', error.message);
-    console.error('Error stack:', error.stack);
+    console.error('Registration failed:', error.message);
     
     res.status(500).json({ 
       message: 'Error creating user',
@@ -87,9 +75,6 @@ exports.register = async (req, res) => {
 // Login user
 exports.login = async (req, res) => {
   try {
-    console.log('=== LOGIN DEBUG ===');
-    console.log('Login attempt for:', req.body.email);
-    
     const { email, password } = req.body;
 
     // Validate input
@@ -98,21 +83,17 @@ exports.login = async (req, res) => {
     }
 
     // Find user
-    const user = await User.findOne({ email: email.toLowerCase() });
-    console.log('User found:', !!user);
-    
+    const user = runtimeUsers.enabled()
+      ? await runtimeUsers.findByEmail(email)
+      : await User.findOne({ email: email.toLowerCase() });
     if (!user) {
-      console.log('No user found with email:', email);
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
     // Check password
-    console.log('Comparing passwords...');
     const isMatch = await user.comparePassword(password);
-    console.log('Password match:', isMatch);
     
     if (!isMatch) {
-      console.log('Password mismatch');
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
@@ -141,7 +122,9 @@ exports.login = async (req, res) => {
 // Get current user
 exports.getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
+    const user = runtimeUsers.enabled()
+      ? await runtimeUsers.findById(req.user.id)
+      : await User.findById(req.user.id).select('-password');
     
     if (!user) {
       return res.status(404).json({ message: 'User not found' });

@@ -1,0 +1,12 @@
+{
+  "name": "government-contracts-root",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "react_api"
+  ],
+  "scripts": {
+    "start": "./start.sh",
+    "start:api": "node react_api/server.js"
+  }
+}

@@ -1,6 +1,7 @@
 // middleware/auth.js
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const runtimeUsers = require('../services/runtimeUserStore');
 
 const auth = async (req, res, next) => {
   try {
@@ -10,8 +11,14 @@ const auth = async (req, res, next) => {
       return res.status(401).json({ message: 'No token, authorization denied' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret');
-    const user = await User.findById(decoded.id).select('-password');
+    const secret = process.env.JWT_SECRET || '';
+    if (secret.length < 32) {
+      return res.status(503).json({ message: 'Authentication is not configured' });
+    }
+    const decoded = jwt.verify(token, secret);
+    const user = runtimeUsers.enabled()
+      ? await runtimeUsers.findById(decoded.id)
+      : await User.findById(decoded.id).select('-password');
     
     if (!user) {
       return res.status(401).json({ message: 'Token is not valid' });

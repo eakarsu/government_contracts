@@ -34,25 +34,21 @@ class AIService {
   }
 
   async extractTextFromDocument(documentUrl) {
-    try {
-      // In production, this would:
-      // 1. Download the document
-      // 2. Extract text using OCR or PDF parsing
-      // 3. Return the extracted text
-      
-      // For now, return mock data
-      return {
-        text: 'Extracted document text would go here',
-        pages: 1
-      };
-    } catch (error) {
-      console.error('Document extraction error:', error);
-      throw new Error('Failed to extract text from document');
-    }
+    void documentUrl;
+    const error = new Error('Document extraction is not implemented');
+    error.status = 501;
+    throw error;
   }
 
   async callAI(prompt) {
     try {
+      if (!this.apiKey || !this.apiUrl) {
+        throw new Error('AI integration is not configured');
+      }
+      const parsedApiUrl = new URL(this.apiUrl);
+      if (parsedApiUrl.protocol !== 'https:') {
+        throw new Error('OPENROUTER_API_URL must use HTTPS');
+      }
       const response = await axios.post(
         `${this.apiUrl}/chat/completions`,
         {
@@ -67,6 +63,8 @@ class AIService {
           temperature: 0.3
         },
         {
+          timeout: 30000,
+          maxContentLength: 2 * 1024 * 1024,
           headers: {
             'Authorization': `Bearer ${this.apiKey}`,
             'Content-Type': 'application/json'
