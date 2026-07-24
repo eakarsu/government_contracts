@@ -2,6 +2,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const runtimeUsers = require('../services/runtimeUserStore');
+const runtimeDb = require('../services/runtimeDb');
 
 const auth = async (req, res, next) => {
   try {
@@ -16,8 +17,9 @@ const auth = async (req, res, next) => {
       return res.status(503).json({ message: 'Authentication is not configured' });
     }
     const decoded = jwt.verify(token, secret);
-    const user = runtimeUsers.enabled()
-      ? await runtimeUsers.findById(decoded.id)
+    const runtimeStore = runtimeDb.enabled() ? runtimeDb : runtimeUsers;
+    const user = runtimeStore.enabled()
+      ? await runtimeStore.findById(decoded.id)
       : await User.findById(decoded.id).select('-password');
     
     if (!user) {

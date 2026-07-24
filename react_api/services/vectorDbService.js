@@ -5,6 +5,7 @@ class VectorDbService {
   constructor() {
     this.client = new QdrantClient({
       url: process.env.QDRANT_URL || 'http://localhost:6333',
+      checkCompatibility: false,
     });
     this.collectionName = process.env.QDRANT_COLLECTION || 'contracts';
     this.initialized = false;

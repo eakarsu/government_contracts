@@ -6,12 +6,14 @@ const mongoose = require('mongoose');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const runtimeDb = require('./services/runtimeDb');
 
 
 const authRoutes = require('./routes/auth');
 const companyRoutes = require('./routes/company');
 const contractRoutes = require('./routes/contracts');
 const formRoutes = require('./routes/forms');
+const runtimeAiRoutes = require('./routes/runtimeAi');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -51,6 +53,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/company', companyRoutes);
 app.use('/api/contracts', contractRoutes);
 app.use('/api/forms', formRoutes);
+app.use('/api/runtime-ai', runtimeAiRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -66,18 +69,27 @@ app.use((err, req, res, next) => {
 });
 
 async function start() {
-  const runtimeMemory = process.env.NODE_ENV === 'test' && process.env.RUNTIME_IN_MEMORY_AUTH === 'true';
-  if (!runtimeMemory) {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/govcontracts');
+  if (runtimeDb.enabled()) {
+    await runtimeDb.migrate();
   } else {
-    console.warn('Using process-local authentication storage for isolated test runtime');
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/govcontracts');
   }
-  app.listen(PORT, HOST, () => {
+  const server = app.listen(PORT, HOST, () => {
     console.log(`Server running at http://${HOST}:${PORT}`);
   });
+  const stop = () => server.close(async () => {
+    if (runtimeDb.enabled()) await runtimeDb.close();
+    else await mongoose.disconnect();
+    process.exit(0);
+  });
+  process.on('SIGTERM', stop);
+  process.on('SIGINT', stop);
+  return server;
 }
 
-start().catch((error) => {
+if (require.main === module) start().catch((error) => {
   console.error('Startup failed:', error.message);
   process.exitCode = 1;
 });
+
+module.exports = { app, start };

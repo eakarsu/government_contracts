@@ -2,6 +2,9 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const runtimeUsers = require('../services/runtimeUserStore');
+const runtimeDb = require('../services/runtimeDb');
+
+const runtimeStore = () => runtimeDb.enabled() ? runtimeDb : runtimeUsers;
 
 const getJwtSecret = () => {
   const secret = process.env.JWT_SECRET || '';
@@ -32,8 +35,8 @@ exports.register = async (req, res) => {
     }
 
     // Check if user exists
-    const existingUser = runtimeUsers.enabled()
-      ? await runtimeUsers.findByEmail(email)
+    const existingUser = runtimeStore().enabled()
+      ? await runtimeStore().findByEmail(email)
       : await User.findOne({ email: email.toLowerCase() });
     
     if (existingUser) {
@@ -41,8 +44,8 @@ exports.register = async (req, res) => {
     }
 
     // Create user
-    const savedUser = runtimeUsers.enabled()
-      ? await runtimeUsers.create({ email, password, companyName: companyName.trim() })
+    const savedUser = runtimeStore().enabled()
+      ? await runtimeStore().create({ email, password, companyName: companyName.trim() })
       : await new User({
           email: email.toLowerCase(),
           password,
@@ -83,8 +86,8 @@ exports.login = async (req, res) => {
     }
 
     // Find user
-    const user = runtimeUsers.enabled()
-      ? await runtimeUsers.findByEmail(email)
+    const user = runtimeStore().enabled()
+      ? await runtimeStore().findByEmail(email)
       : await User.findOne({ email: email.toLowerCase() });
     if (!user) {
       return res.status(401).json({ message: 'Invalid email or password' });
@@ -122,8 +125,8 @@ exports.login = async (req, res) => {
 // Get current user
 exports.getMe = async (req, res) => {
   try {
-    const user = runtimeUsers.enabled()
-      ? await runtimeUsers.findById(req.user.id)
+    const user = runtimeStore().enabled()
+      ? await runtimeStore().findById(req.user.id)
       : await User.findById(req.user.id).select('-password');
     
     if (!user) {
