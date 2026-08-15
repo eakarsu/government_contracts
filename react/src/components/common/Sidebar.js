@@ -16,6 +16,7 @@ const Sidebar = ({ open, setOpen }) => {
     { name: 'Search Contracts', href: '/search', icon: Search },
     { name: 'Saved Searches', href: '/saved-searches', icon: Bookmark },
     { name: 'Applications', href: '/applications', icon: FolderOpen },
+    { name: 'Decision Center', href: '/decision-center', icon: FileText },
     { name: 'Company Profile', href: '/profile', icon: User },
   ];
 

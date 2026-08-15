@@ -19,6 +19,7 @@ import SavedSearches from './pages/SavedSearches';
 import Applications from './pages/Applications';
 import Login from './pages/Login';
 import PrivateRoute from './components/common/PrivateRoute';
+import DecisionCenter from './pages/DecisionCenter';
 
 const queryClient = new QueryClient();
 
@@ -40,6 +41,7 @@ function App() {
                 <Route path="missing-features" element={<MissingFeaturesHub />} />
                 <Route path="production-readiness" element={<ProductionReadiness />} />
                 <Route path="applications" element={<Applications />} />
+                <Route path="decision-center" element={<DecisionCenter />} />
               </Route>
             </Routes>
           <ToastContainer position="bottom-right" />
