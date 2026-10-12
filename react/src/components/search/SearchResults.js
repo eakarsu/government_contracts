@@ -4,7 +4,8 @@ import { Calendar, DollarSign, Building, FileText, ChevronRight } from 'lucide-r
 import { format } from 'date-fns';
 
 const SearchResults = ({ results }) => {
-  if (!results || results.contracts.length === 0) {
+  const contracts = Array.isArray(results?.contracts) ? results.contracts : [];
+  if (contracts.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow p-8 text-center">
         <p className="text-gray-500">No contracts found matching your criteria.</p>
@@ -16,21 +17,21 @@ const SearchResults = ({ results }) => {
     <div>
       <div className="mb-4 flex justify-between items-center">
         <h2 className="text-xl font-semibold">
-          Found {results.totalCount} contracts
+          Found {results.totalCount ?? contracts.length} contracts
         </h2>
         <div className="text-sm text-gray-600">
-          AI Relevance Score: {results.averageRelevance}%
+          {typeof results.averageRelevance === 'number' ? `AI Relevance Score: ${results.averageRelevance}%` : 'Contract opportunities'}
         </div>
       </div>
 
       <div className="space-y-4">
-        {results.contracts.map((contract) => (
-          <div key={contract.id} className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
+        {contracts.map((contract) => (
+          <div key={contract._id || contract.id} className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
             <div className="p-6">
               <div className="flex justify-between items-start mb-4">
                 <div className="flex-1">
                   <Link 
-                    to={`/contract/${contract.id}`}
+                    to={`/contract/${contract._id || contract.id}`}
                     className="text-lg font-semibold text-blue-600 hover:text-blue-800"
                   >
                     {contract.title}
@@ -40,9 +41,7 @@ const SearchResults = ({ results }) => {
                   </p>
                 </div>
                 <div className="text-right">
-                  <div className="text-lg font-semibold text-green-600">
-                    {contract.relevanceScore}% Match
-                  </div>
+                  {typeof contract.relevanceScore === 'number' && <div className="text-lg font-semibold text-green-600">{contract.relevanceScore}% Match</div>}
                   {contract.aiInsight && (
                     <p className="text-xs text-gray-500 mt-1">AI Recommended</p>
                   )}
@@ -56,7 +55,7 @@ const SearchResults = ({ results }) => {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Calendar size={16} />
-                  <span>Due: {format(new Date(contract.responseDeadline), 'MMM dd, yyyy')}</span>
+                  <span>Due: {contract.responseDeadline ? format(new Date(contract.responseDeadline), 'MMM dd, yyyy') : 'Not specified'}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <DollarSign size={16} />
@@ -64,7 +63,7 @@ const SearchResults = ({ results }) => {
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Building size={16} />
-                  <span>{contract.agency}</span>
+                  <span>{contract.agency || contract.department}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <FileText size={16} />
@@ -93,7 +92,7 @@ const SearchResults = ({ results }) => {
                   )}
                 </div>
                 <Link
-                  to={`/contract/${contract.id}`}
+                  to={`/contract/${contract._id || contract.id}`}
                   className="flex items-center gap-1 text-blue-600 hover:text-blue-800"
                 >
                   View Details

@@ -111,7 +111,7 @@ const Applications = () => {
                       Submitted
                     </div>
                     <p className="font-medium">
-                      {format(new Date(application.submittedAt), 'MMM dd, yyyy')}
+                      {application.submittedAt ? format(new Date(application.submittedAt), 'MMM dd, yyyy') : 'Not submitted'}
                     </p>
                   </div>
                   <div>
@@ -134,7 +134,7 @@ const Applications = () => {
                       Response Deadline
                     </div>
                     <p className="font-medium">
-                      {format(new Date(application.deadline), 'MMM dd, yyyy')}
+                      {application.deadline ? format(new Date(application.deadline), 'MMM dd, yyyy') : 'Not specified'}
                     </p>
                   </div>
                 </div>

@@ -13,7 +13,7 @@ import {
 
 const ContractChart = ({ data = [] }) => {
   // Sample data if none provided
-  const chartData = data.length > 0 ? data : [
+  const chartData = Array.isArray(data) && data.length > 0 ? data : [
     { month: 'Jan', contracts: 12, value: 450000 },
     { month: 'Feb', contracts: 19, value: 680000 },
     { month: 'Mar', contracts: 15, value: 520000 },

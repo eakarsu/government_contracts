@@ -69,17 +69,17 @@ app.use((err, req, res, next) => {
 });
 
 async function start() {
+  // Domain routes use Mongoose even when runtime accounts and AI history use PostgreSQL.
+  await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/govcontracts');
   if (runtimeDb.enabled()) {
     await runtimeDb.migrate();
-  } else {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/govcontracts');
   }
   const server = app.listen(PORT, HOST, () => {
     console.log(`Server running at http://${HOST}:${PORT}`);
   });
   const stop = () => server.close(async () => {
     if (runtimeDb.enabled()) await runtimeDb.close();
-    else await mongoose.disconnect();
+    await mongoose.disconnect();
     process.exit(0);
   });
   process.on('SIGTERM', stop);

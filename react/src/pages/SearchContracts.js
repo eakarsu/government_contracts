@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { useQuery } from 'react-query';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import SearchFilters from '../components/search/SearchFilters';
 import SearchResults from '../components/search/SearchResults';
@@ -22,6 +21,16 @@ const SearchContracts = () => {
 
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+    contractService.listContracts({ limit: 20 }).then((results) => {
+      if (active) setSearchResults(results);
+    }).catch(() => {
+      if (active) toast.error('Contract opportunities could not be loaded.');
+    });
+    return () => { active = false; };
+  }, []);
 
   const handleSearch = async (params) => {
     setIsSearching(true);

@@ -184,7 +184,7 @@ exports.getApplications = async (req, res) => {
     // Transform applications for frontend
     const transformedApps = applications.map(app => ({
       id: app._id,
-      contractId: app.contractId._id,
+      contractId: app.contractId?._id || app.contractId,
       contractTitle: app.contractTitle,
       agency: app.agency,
       status: app.status,

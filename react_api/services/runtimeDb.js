@@ -90,6 +90,20 @@ async function saveAi({ userId, prompt, content, model }) {
   );
   return id;
 }
+async function listAi(userId) {
+  const result = await getPool().query(
+    'SELECT id, prompt, content, provider, model, created_at FROM runtime_ai_results WHERE user_id=$1 ORDER BY created_at DESC LIMIT 50',
+    [userId],
+  );
+  return result.rows;
+}
+async function getAi(userId, id) {
+  const result = await getPool().query(
+    'SELECT id, prompt, content, provider, model, created_at FROM runtime_ai_results WHERE user_id=$1 AND id=$2',
+    [userId, id],
+  );
+  return result.rows[0] || null;
+}
 async function close() { if (pool) { await pool.end(); pool = undefined; } }
 
-module.exports = { enabled, migrate, create, provisionAdmin, findByEmail, findById, saveAi, close };
+module.exports = { enabled, migrate, create, provisionAdmin, findByEmail, findById, saveAi, listAi, getAi, close };

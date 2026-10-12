@@ -122,6 +122,15 @@ exports.login = async (req, res) => {
   }
 };
 
+// Use the configured account on the server; never send its password to the browser.
+exports.demoLogin = async (req, res) => {
+  if (!process.env.DEMO_EMAIL || !process.env.DEMO_PASSWORD || process.env.ENABLE_DEMO_CREDENTIAL_AUTOFILL === 'false') {
+    return res.status(503).json({ message: 'Demo login is not configured' });
+  }
+  req.body = { email: process.env.DEMO_EMAIL, password: process.env.DEMO_PASSWORD };
+  return exports.login(req, res);
+};
+
 // Get current user
 exports.getMe = async (req, res) => {
   try {

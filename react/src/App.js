@@ -1,3 +1,4 @@
+import NativeAIReadiness from './pages/NativeAIReadiness';
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -32,7 +33,7 @@ function App() {
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>
-                <Route index element={<Dashboard />} />
+                <Route index element={<Dashboard />} /><Route path="ai-workspace" element={<NativeAIReadiness/>}/>
                 <Route path="search" element={<SearchContracts />} />
                 <Route path="contract/:id" element={<ContractDetails />} />
                 <Route path="form-generator/:contractId" element={<FormGenerator />} />

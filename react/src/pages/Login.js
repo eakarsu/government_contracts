@@ -5,7 +5,7 @@ import { Building2, Mail, Lock, AlertCircle } from 'lucide-react';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, loginDemo } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     email: '',
@@ -201,12 +201,21 @@ const Login = () => {
             <div>
             <button
               type="button"
-              onClick={() => { setFormData((current) => ({ ...current, email: process.env.REACT_APP_DEMO_EMAIL || '', password: process.env.REACT_APP_DEMO_PASSWORD || '' })); }}
-              disabled={!process.env.REACT_APP_DEMO_EMAIL || !process.env.REACT_APP_DEMO_PASSWORD}
-              aria-label="Auto Fill Demo Credentials"
+              onClick={async () => {
+                setError('');
+                setLoading(true);
+                try {
+                  const result = await loginDemo();
+                  if (!result.success) setError(result.error);
+                } finally {
+                  setLoading(false);
+                }
+              }}
+              disabled={loading}
+              aria-label="Log In as Demo"
               style={{ width: '100%', marginBottom: '12px', padding: '10px 14px', borderRadius: '8px', border: '1px solid currentColor', background: 'transparent', cursor: 'pointer' }}
             >
-              Auto Fill Demo Credentials
+              Log In as Demo
             </button>
             <button
                 type="submit"

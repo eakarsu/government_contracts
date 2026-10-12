@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 
 const RecentActivity = ({ activities = [] }) => {
+  const rows = Array.isArray(activities) ? activities : [];
   const getActivityIcon = (type) => {
     switch (type) {
       case 'search':
@@ -26,7 +27,7 @@ const RecentActivity = ({ activities = [] }) => {
     }
   };
 
-  if (activities.length === 0) {
+  if (rows.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
         No recent activity
@@ -36,7 +37,7 @@ const RecentActivity = ({ activities = [] }) => {
 
   return (
     <div className="space-y-4">
-      {activities.map((activity, index) => (
+      {rows.map((activity, index) => (
         <div key={index} className="flex items-start gap-3">
           <div className="p-2 bg-gray-100 rounded-lg">
             {getActivityIcon(activity.type)}

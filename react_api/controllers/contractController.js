@@ -248,9 +248,20 @@ exports.indexContracts = async (req, res) => {
 
 exports.saveSearch = async (req, res) => {
   try {
+    const criteria = req.body.criteria || req.body;
     const search = new Search({
       userId: req.userId,
-      ...req.body
+      name: req.body.name,
+      query: {
+        keywords: criteria.query || criteria.keywords || '',
+        naicsCode: criteria.naicsCode,
+        setAside: criteria.setAside,
+        agency: criteria.agency,
+        state: criteria.placeOfPerformance || criteria.state,
+        postedAfter: criteria.dateFrom || criteria.postedAfter,
+        deadlineBefore: criteria.dateTo || criteria.deadlineBefore,
+        contractValue: { min: criteria.minValue, max: criteria.maxValue }
+      }
     });
     
     await search.save();

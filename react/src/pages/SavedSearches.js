@@ -51,9 +51,9 @@ const SavedSearches = () => {
   );
 
   const runSearch = async (search) => {
-    setActiveSearchId(search.id);
+    setActiveSearchId(search._id || search.id);
     try {
-      const results = await contractService.searchContracts(search.criteria);
+      const results = await contractService.searchContracts(search.criteria || search);
       // Navigate to search page with results
     } catch (error) {
       toast.error('Failed to run search');
@@ -76,7 +76,7 @@ const SavedSearches = () => {
       {searches && searches.length > 0 ? (
         <div className="grid gap-6">
           {searches.map((search) => (
-            <div key={search.id} className="bg-white rounded-lg shadow">
+            <div key={search._id || search.id} className="bg-white rounded-lg shadow">
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div>
@@ -88,7 +88,7 @@ const SavedSearches = () => {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => toggleAlertMutation.mutate({ 
-                        searchId: search.id, 
+                        searchId: search._id || search.id,
                         enabled: !search.alertEnabled 
                       })}
                       className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm ${
@@ -106,29 +106,29 @@ const SavedSearches = () => {
                 <div className="mb-4">
                   <h4 className="text-sm font-medium text-gray-700 mb-2">Search Criteria</h4>
                   <div className="flex flex-wrap gap-2">
-                    {search.criteria.query && (
+                    {(search.criteria || search).query && (
                       <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
-                        Keywords: {search.criteria.query}
+                        Keywords: {(search.criteria || search).query}
                       </span>
                     )}
-                    {search.criteria.agency && (
+                    {(search.criteria || search).agency && (
                       <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">
-                        Agency: {search.criteria.agency}
+                        Agency: {(search.criteria || search).agency}
                       </span>
                     )}
-                    {search.criteria.setAside && (
+                    {(search.criteria || search).setAside && (
                       <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm">
-                        {search.criteria.setAside}
+                        {(search.criteria || search).setAside}
                       </span>
                     )}
-                    {search.criteria.naicsCode && (
+                    {(search.criteria || search).naicsCode && (
                       <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm">
-                        NAICS: {search.criteria.naicsCode}
+                        NAICS: {(search.criteria || search).naicsCode}
                       </span>
                     )}
-                    {(search.criteria.minValue || search.criteria.maxValue) && (
+                    {((search.criteria || search).minValue || (search.criteria || search).maxValue) && (
                       <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
-                        Value: ${search.criteria.minValue || '0'} - ${search.criteria.maxValue || 'Any'}
+                        Value: ${(search.criteria || search).minValue || '0'} - ${(search.criteria || search).maxValue || 'Any'}
                       </span>
                     )}
                   </div>
@@ -149,10 +149,10 @@ const SavedSearches = () => {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => runSearch(search)}
-                      disabled={activeSearchId === search.id}
+                      disabled={activeSearchId === (search._id || search.id)}
                       className="flex items-center gap-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
                     >
-                      {activeSearchId === search.id ? (
+                      {activeSearchId === (search._id || search.id) ? (
                         <>
                           <Pause size={16} />
                           Running...
@@ -165,7 +165,7 @@ const SavedSearches = () => {
                       )}
                     </button>
                     <Link
-                      to={`/search?savedId=${search.id}`}
+                      to={`/search?savedId=${search._id || search.id}`}
                       className="p-2 text-gray-600 hover:bg-gray-100 rounded"
                     >
                       <Edit size={20} />
@@ -173,7 +173,7 @@ const SavedSearches = () => {
                     <button
                       onClick={() => {
                         if (window.confirm('Are you sure you want to delete this search?')) {
-                          deleteMutation.mutate(search.id);
+                          deleteMutation.mutate(search._id || search.id);
                         }
                       }}
                       className="p-2 text-red-600 hover:bg-red-50 rounded"

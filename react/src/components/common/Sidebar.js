@@ -12,6 +12,7 @@ import {
 
 const Sidebar = ({ open, setOpen }) => {
   const navigation = [
+    { name: 'AI workspace', href: '/ai-workspace', icon: FileText },
     { name: 'Dashboard', href: '/', icon: Home },
     { name: 'Search Contracts', href: '/search', icon: Search },
     { name: 'Saved Searches', href: '/saved-searches', icon: Bookmark },

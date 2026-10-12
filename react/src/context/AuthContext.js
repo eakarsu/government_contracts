@@ -44,6 +44,19 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const loginDemo = async () => {
+    try {
+      const response = await api.post('/auth/demo-login');
+      const { token, user } = response.data;
+      localStorage.setItem('authToken', token);
+      setUser(user);
+      navigate('/');
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.response?.data?.message || 'Demo login is unavailable' };
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('authToken');
     setUser(null);
@@ -54,6 +67,7 @@ export const AuthProvider = ({ children }) => {
     user,
     loading,
     login,
+    loginDemo,
     logout,
     checkAuth
   };

@@ -26,9 +26,9 @@ class FormService {
   }
 
   // Get applications
-  async getApplications() {
-    const response = await api.get('/forms/applications');
-    return response.data;
+  async getApplications(params = {}) {
+    const response = await api.get('/forms/applications', { params });
+    return Array.isArray(response.data?.applications) ? response.data.applications : [];
   }
 
   // Get application details

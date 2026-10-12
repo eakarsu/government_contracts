@@ -34,7 +34,20 @@ class ContractService {
   // Get saved searches
   async getSavedSearches() {
     const response = await api.get('/contracts/searches');
-    return response.data;
+    return Array.isArray(response.data) ? response.data.map((item) => ({
+      ...item,
+      criteria: item.criteria || {
+        query: item.query?.keywords || '',
+        naicsCode: item.query?.naicsCode || '',
+        setAside: item.query?.setAside || '',
+        agency: item.query?.agency || '',
+        placeOfPerformance: item.query?.state || '',
+        dateFrom: item.query?.postedAfter || null,
+        dateTo: item.query?.deadlineBefore || null,
+        minValue: item.query?.contractValue?.min || '',
+        maxValue: item.query?.contractValue?.max || ''
+      }
+    })) : [];
   }
 
   // Index contracts from SAM.gov
@@ -64,7 +77,7 @@ class ContractService {
   // List contracts - ADD THIS METHOD
   async listContracts(params = {}) {
     const response = await api.get('/contracts', { params });
-    return response.data;
+    return { ...response.data, contracts: Array.isArray(response.data?.contracts) ? response.data.contracts : [] };
   }
   
 }
